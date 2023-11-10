@@ -67,8 +67,7 @@ public class QueryIndex
     }
 
     private static void extractInformation(String topElement) {
-	// Use regular expressions or other custom logic to extract information
-        // Example: extracting number, title, description, and narrative
+
         String number = extractTagContent(topElement, "num");
         String title = extractTagContent(topElement, "title");
         String description = extractTagContent(topElement, "desc");
@@ -83,12 +82,12 @@ public class QueryIndex
     }
 
     private static Query createQuery(String title, String description, String narrative) throws ParseException {
-        // Combine original query terms with additional terms for query expansion
-        String expandedQuery = String.format("title:\"%s\"^2.0 OR description:\"%s\"^1.5 OR narrative:\"%s\"", title, description, narrative);
-        // Use Lucene MultiFieldQueryParser for query expansion
+        String query = String.format("title:\"%s\"^2.0 OR description:\"%s\"^1.5 OR narrative:\"%s\"", title, description, narrative);
+       
 	QueryParser parser = new QueryParser("title", new StandardAnalyzer());
         return parser.parse(expandedQuery);
     }
+    
     private static String extractTagContent(String element, String tagName) {
         Pattern pattern = Pattern.compile("<" + tagName + ">(.*?)<");
         Matcher matcher = pattern.matcher(element);
