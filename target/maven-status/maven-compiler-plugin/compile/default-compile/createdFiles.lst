@@ -1,3 +1,6 @@
-com/example/WordEmbeddingModel.class
 com/example/App.class
+com/example/ReadDocuments.class
+com/example/new_sources/FinancialTimes.class
+com/example/WordEmbeddingModel.class
+com/example/new_sources/LosAngelesTimes.class
 com/example/QueryIndex.class
