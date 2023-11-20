@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import com.example.new_sources.FinancialTimes;
 import com.example.new_sources.LosAngelesTimes;
+import com.example.new_sources.ForeignBroadcast;
+import com.example.new_sources.FederalRegister;
 
 public class ReadDocuments {
 
@@ -16,8 +18,10 @@ public class ReadDocuments {
 
          String filePath = "Assignment Two/ft/ft911/ft911_1";
 	 String filePathLA = "Assignment Two/latimes/la112490";
+	 String filePathFB = "Assignment Two/fbis/fb396001";
+	 String filePathFR = "Assignment Two/fr94/01/fr940104.0";
 
-         try (BufferedReader reader = new BufferedReader(new FileReader(filePathLA))) {
+         try (BufferedReader reader = new BufferedReader(new FileReader(filePathFR))) {
               StringBuilder content = new StringBuilder();
               String line;
 
@@ -30,18 +34,16 @@ public class ReadDocuments {
 
         while(matcher.find()) {
               //FinancialTimes ft = new FinancialTimes();
-	      LosAngelesTimes ft = new LosAngelesTimes();
+	      //ForeignBroadcast ft = new ForeignBroadcast();
+	      FederalRegister ft = new FederalRegister();
+
 	      String doc = matcher.group();
-              ft.loadLosAngelesTimesDoc(doc.toString());
+              ft.loadFederalRegisterDoc(doc.toString());
 
         	System.out.println("DocNo: " + ft.getDocNo());
-		System.out.println("DocID: " + ft.getDocID());
-        	System.out.println("Section: " + ft.getSection());
-        	System.out.println("Date: " + ft.getDate());
-        	System.out.println("Headline: " + ft.getHeadline());
-        	System.out.println("Text: " + ft.getText());
-        	System.out.println("Length: " + ft.getLength());
-	   }
+		System.out.println("Parent " + ft.getParent());
+         	System.out.println("Text: " + ft.getText());
+      	   }
 	
 	}catch (FileNotFoundException e) {
                 e.printStackTrace();
