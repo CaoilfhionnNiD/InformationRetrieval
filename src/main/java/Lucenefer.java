@@ -299,12 +299,10 @@ public class Lucenefer {
             PrintWriter writer = new PrintWriter(absPathToSearchResults, "UTF-8");
 
 	    int queryNum = 0;
-	   Query query = new MatchAllDocsQuery();
-
-//	   for (Query query : queries) {
+	   for (Query query : queries) {
 		    // Get the set of results
-		  //	System.out.println(query);
-                ScoreDoc[] hits = indexSearcher.search(query, 30).scoreDocs;
+		  	System.out.println(query);
+                ScoreDoc[] hits = indexSearcher.search(query, 1000).scoreDocs;
 
                 // Print the results
                 for (int i = 0; i < hits.length; i++)
@@ -315,7 +313,7 @@ public class Lucenefer {
             		System.out.println(resultLine);
 	    	}	    
 		queryNum++;
-	    //}
+	    }
 
         } catch (IOException e) {
             System.out.println("ERROR: an error occurred when instantiating the printWriter!");

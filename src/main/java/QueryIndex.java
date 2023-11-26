@@ -96,9 +96,9 @@ public class QueryIndex
        // String expandedDescription = expandQuery(description);
        // String expandedNarrative = expandQuery(narrative);
 
-        String query = String.format("title:\"%s\"^2.0 OR description:\"%s\"^1.5 OR narrative:\"%s\"", expandedTitle, description, narrative);
+        String query = String.format("Headline:\"%s\"^2.0 OR Text:\"%s\"^1.5 OR narrative:\"%s\"", expandedTitle, description, narrative);
        
-	QueryParser parser = new QueryParser("title", analyzer);
+	QueryParser parser = new QueryParser("Headline", analyzer);
         return parser.parse(query);
     }
 
