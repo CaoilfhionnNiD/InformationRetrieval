@@ -34,6 +34,12 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.search.BoostQuery;
+import org.apache.lucene.search.BooleanClause;
 
 public class QueryIndex
 {
@@ -41,15 +47,16 @@ public class QueryIndex
 	private static String TOPICS_DIRECTORY = "topics";
 	private static WordEmbeddingModel wordEmbeddingModel;	
 
-	private static List<Query> queries = new ArrayList<>();
+	private static List<BooleanQuery> queries = new ArrayList<>();
 	private static int MAX_RESULTS = 10;
 	private static Analyzer analyzer;
 
-	public static List<Query> loadQueries(Analyzer chosenAnalyzer) throws IOException, ParseException
+	public static List<BooleanQuery> loadQueries(Analyzer chosenAnalyzer, WordEmbeddingModel wem) throws IOException, ParseException
 	{
 		analyzer = chosenAnalyzer;
+		wordEmbeddingModel = wem;
 		System.out.println("QUERIES");
-		wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
+		//wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
 		parseNonStandardXml(TOPICS_DIRECTORY);
 		return queries;
 	}
@@ -66,7 +73,6 @@ public class QueryIndex
             Pattern topPattern = Pattern.compile("<top>.*?</top>");
             Matcher matcher = topPattern.matcher(xmlContent.toString());
 
-	    System.out.println("matching");
             while (matcher.find()) {
                 String topElement = matcher.group();
                 extractInformation(topElement);
@@ -82,7 +88,7 @@ public class QueryIndex
         String narrative = extractTagContent(topElement, "narr");
 
     	try {
-        Query query = createQuery(title, description, narrative);
+        BooleanQuery query = createQuery(title, description, narrative);
 	//System.out.println(query.toString());
 	queries.add(query);
     	} catch (ParseException e) {
@@ -90,16 +96,21 @@ public class QueryIndex
     	}
     }
 
-    private static Query createQuery(String title, String description, String narrative) throws ParseException {
+    private static BooleanQuery createQuery(String title, String description, String narrative) throws ParseException {
         
 	String expandedTitle = expandQuery(title);
        // String expandedDescription = expandQuery(description);
-       // String expandedNarrative = expandQuery(narrative);
 
         String query = String.format("Headline:\"%s\"^2.0 OR Text:\"%s\"^1.5 OR narrative:\"%s\"", expandedTitle, description, narrative);
        
-	QueryParser parser = new QueryParser("Headline", analyzer);
-        return parser.parse(query);
+	QueryParser queryParser = new MultiFieldQueryParser(new String[]{"Headline", "Text"}, analyzer);
+	Query titleQuery = queryParser.parse(QueryParser.escape(expandedTitle));
+	Query descriptionQuery = queryParser.parse(QueryParser.escape(description));
+        
+	BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
+	booleanQuery.add(new BoostQuery(titleQuery, (float) 1), BooleanClause.Occur.SHOULD);
+	booleanQuery.add(new BoostQuery(descriptionQuery, (float) 2), BooleanClause.Occur.SHOULD);
+	return booleanQuery.build();
     }
 
 	private static String expandQuery(String input)

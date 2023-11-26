@@ -52,7 +52,7 @@ import static com.example.news_sources.FinancialTimesHandler.loadFilesAndExtract
 import static com.example.news_sources.LosAngelesTimesHandler.getLosAngelesTimesDocs;
 import static com.example.news_sources.LosAngelesTimesHandler.loadFilesAndExtractInfoForLosAngelesTimes;
 import static com.example.QueryIndex.loadQueries;
-
+import org.apache.lucene.search.BooleanQuery;
 public class Lucenefer {
 
     private static List<Document> finTimesDocs = new ArrayList<>();
@@ -60,7 +60,8 @@ public class Lucenefer {
     private static List<Document> laTimesDocs = new ArrayList<>();
     private static List<Document> fbisDocs = new ArrayList<>();
 
-    private static List<Query> queries = new ArrayList<>();
+    private static List<BooleanQuery> queries = new ArrayList<>();
+    private static WordEmbeddingModel wordEmbeddingModel;
 
     private final static Path currentRelativePath = Paths.get("").toAbsolutePath();
     private final static String absPathToSearchResults = String.format("%s/queryResults", currentRelativePath);
@@ -92,6 +93,7 @@ public class Lucenefer {
         Scanner myObj = new Scanner(System.in);
         String similarityChosen = myObj.nextLine();
 
+	wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
         String similarity = null;
         //Retrieval model choose
         switch (similarityChosen) {
@@ -202,7 +204,8 @@ public class Lucenefer {
         }
         System.out.println("loading and executing queries");
         System.out.println(directory);
-	executeQueries(directory, analyzerChosen);
+	//wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
+	executeQueries(directory, wordEmbeddingModel);
         analyzer.close();
         try {
             directory.close();
@@ -219,9 +222,9 @@ public class Lucenefer {
         System.out.println("loaded foreign broadcast information service documents");
 
         System.out.println("loading la times documents");
-       // loadFilesAndExtractInfoForLosAngelesTimes(absPathToLaTimes);
+        loadFilesAndExtractInfoForLosAngelesTimes(absPathToLaTimes);
         System.out.println("1");
-       // laTimesDocs= getLosAngelesTimesDocs();
+        laTimesDocs= getLosAngelesTimesDocs();
         System.out.println("loaded la times documents");
 
         System.out.println("loading financial times documents");
@@ -286,31 +289,30 @@ public class Lucenefer {
             System.out.println(String.format("ERROR MESSAGE: %s", e.getMessage()));
         }
     }
-    private static void executeQueries(Directory directory, String analyzerChosen) throws ParseException {
+    private static void executeQueries(Directory directory, WordEmbeddingModel wordEmbeddingModel) throws ParseException {
         try {
             IndexReader indexReader = DirectoryReader.open(directory);
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
             indexSearcher.setSimilarity(similarityModel);
 
-	    System.out.println("here");
-	    queries = loadQueries(analyzer);
+	    queries = loadQueries(analyzer, wordEmbeddingModel);
 	    System.out.println("Size of queries: " + queries.size());
             //QueryParser queryParser = new MultiFieldQueryParser(new String[]{"headline", "text"}, analyzer);
             PrintWriter writer = new PrintWriter(absPathToSearchResults, "UTF-8");
 
 	    int queryNum = 0;
-	   for (Query query : queries) {
+	   for (BooleanQuery query : queries) {
 		    // Get the set of results
-		  	System.out.println(query);
+//		  	System.out.println(query);
                 ScoreDoc[] hits = indexSearcher.search(query, 1000).scoreDocs;
+		String analyzerName = analyzer.getClass().getName();
 
                 // Print the results
                 for (int i = 0; i < hits.length; i++)
                 {
                         Document hitDoc = indexSearcher.doc(hits[i].doc);
-                        String resultLine = queryNum + "\t" + "Q0" + "\t" + hitDoc.get("DocNo") + "\t" + (i + 1) + "\t" + hits[i].score + "\t" + analyzerChosen;
+                        String resultLine = queryNum + "\t" + "Q0" + "\t" + hitDoc.get("DocNo") + "\t" + (i + 1) + "\t" + hits[i].score + "\t" + analyzerName;
                         writer.println(resultLine);
-            		System.out.println(resultLine);
 	    	}	    
 		queryNum++;
 	    }

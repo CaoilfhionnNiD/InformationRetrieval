@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-
+import java.io.IOException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -28,7 +28,6 @@ import org.apache.lucene.analysis.CharArraySet;
 
 public class CustomAnalyzer extends Analyzer {
 
-
         private List<String> stopWords =
         Arrays.asList(
             "a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is",
@@ -49,35 +48,33 @@ public class CustomAnalyzer extends Analyzer {
 		stream = new FlattenGraphFilter(new WordDelimiterGraphFilter(stream, WordDelimiterGraphFilter.SPLIT_ON_NUMERICS |
 				WordDelimiterGraphFilter.GENERATE_WORD_PARTS | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS |
 				WordDelimiterGraphFilter.PRESERVE_ORIGINAL , null));
-		stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, wordExpansion(), true));
+      		stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, wordExpansion(), true));
 		stream = new StopFilter(stream, ENGLISH_STOP_WORDS_SET);
 		stream = new PorterStemFilter(stream);
+
 		return new TokenStreamComponents(tokenizer, stream);
 	}
 
-
-	private SynonymMap wordExpansion() {
-		SynonymMap wordExpansionMap = new SynonymMap(null, null, 0);
-		try {
-			final SynonymMap.Builder builder = new SynonymMap.Builder(true);
-
-			// 读取并添加来自 similar_word.txt 的同义词
-			BufferedReader reader = new BufferedReader(new FileReader(ppath + "/src/com/kerinb/IR_proj2_group14/RankAndAnalyzerFiles/similar_words.txt"));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(" - ");
-				if (parts.length == 2) {
-					String word = parts[0];
-					String synonym = parts[1];
-					builder.add(new CharsRef(word), new CharsRef(synonym), true);
-				}
-			}
-			reader.close();
-			wordExpansionMap = builder.build();
-		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getLocalizedMessage() + "occurred when trying to create synonym map");
-		}
-		return wordExpansionMap;
-	}
+    private SynonymMap wordExpansion() {
+        SynonymMap wordExpansionMap = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(ppath.toString(), "src", "main", "java", "similar_words.txt").toString()))) {
+            final SynonymMap.Builder builder = new SynonymMap.Builder(true);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" - ");
+                if (parts.length == 2) {
+                    String word = parts[0];
+                    String synonym = parts[1];
+                    builder.add(new CharsRef(word), new CharsRef(synonym), true);
+                }
+            }
+            wordExpansionMap = builder.build();
+        } catch (IOException e) {
+            System.out.println("IO ERROR: " + e.getLocalizedMessage() + " occurred when trying to create synonym map");
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getLocalizedMessage() + " occurred when trying to create synonym map");
+        }
+        return wordExpansionMap;
+    }
 }
 

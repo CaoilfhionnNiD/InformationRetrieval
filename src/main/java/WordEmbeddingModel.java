@@ -1,5 +1,6 @@
 package com.example;
 
+import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +13,10 @@ public class WordEmbeddingModel {
 
     public WordEmbeddingModel(String filePath) {
         this.wordEmbeddings = loadModel(filePath);
+    }
+
+    public Map<String, float[]> getWordEmbeddings() {
+        return wordEmbeddings;
     }
 
     private Map<String, float[]> loadModel(String filePath) {
@@ -37,6 +42,7 @@ public class WordEmbeddingModel {
 
         return embeddings;
     }
+
 
     public boolean hasWord(String word) {
         return wordEmbeddings.containsKey(word);
