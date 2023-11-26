@@ -32,19 +32,26 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QueryIndex
 {
 
-	private static String TOPICS_DIRECTORY = "../topics";
+	private static String TOPICS_DIRECTORY = "topics";
 	private static WordEmbeddingModel wordEmbeddingModel;	
 
+	private static List<Query> queries = new ArrayList<>();
 	private static int MAX_RESULTS = 10;
-	
-	public static void main(String[] args) throws IOException, ParseException
+	private static Analyzer analyzer;
+
+	public static List<Query> loadQueries(Analyzer chosenAnalyzer) throws IOException, ParseException
 	{
+		analyzer = chosenAnalyzer;
+		System.out.println("QUERIES");
 		wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
 		parseNonStandardXml(TOPICS_DIRECTORY);
-
+		return queries;
 	}
 
 	private static void parseNonStandardXml(String filePath) throws IOException {
@@ -59,6 +66,7 @@ public class QueryIndex
             Pattern topPattern = Pattern.compile("<top>.*?</top>");
             Matcher matcher = topPattern.matcher(xmlContent.toString());
 
+	    System.out.println("matching");
             while (matcher.find()) {
                 String topElement = matcher.group();
                 extractInformation(topElement);
@@ -75,7 +83,8 @@ public class QueryIndex
 
     	try {
         Query query = createQuery(title, description, narrative);
-	System.out.println(query.toString());
+	//System.out.println(query.toString());
+	queries.add(query);
     	} catch (ParseException e) {
           e.printStackTrace();
     	}
@@ -89,7 +98,7 @@ public class QueryIndex
 
         String query = String.format("title:\"%s\"^2.0 OR description:\"%s\"^1.5 OR narrative:\"%s\"", expandedTitle, description, narrative);
        
-	QueryParser parser = new QueryParser("title", new StandardAnalyzer());
+	QueryParser parser = new QueryParser("title", analyzer);
         return parser.parse(query);
     }
 

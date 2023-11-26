@@ -1,4 +1,5 @@
-package com.example.new_sources;
+package com.example.news_sources;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.BufferedReader;
@@ -32,8 +33,10 @@ public class ForeignBroadcast {
 
     public void setDate(String dateString) {
         try{
-            Date date = dateFormat.parse(dateString);
-            this.date = date;
+            if(!dateString.equals("")){ 
+		Date date = dateFormat.parse(dateString);
+            	this.date = date;
+	    }
         } catch (ParseException e) {
             e.printStackTrace();
         }

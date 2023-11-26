@@ -19,11 +19,15 @@
   </properties>
 
   <dependencies>
-    <!-- Add your dependencies here -->
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
-      <version>8.6.3</version>
+      <version>7.4.0</version>
+    </dependency>
+    <dependency>
+    <groupId>org.apache.lucene</groupId>
+    <artifactId>lucene-analyzers-common</artifactId>
+    <version>8.6.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.lucene</groupId>
@@ -31,12 +35,26 @@
       <version>8.6.3</version>
     </dependency>
     <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-sandbox</artifactId>
+        <version>8.6.3</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-misc</artifactId>
+        <version>8.6.3</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-analyzers-morfologik</artifactId>
+        <version>8.6.3</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    <!-- Add more dependencies as needed -->
   </dependencies>
 
   <build>
@@ -67,7 +85,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-			<mainClass>com.example.ReadDocuments</mainClass>
+			<mainClass>com.example.Lucenefer</mainClass>
                 </transformer>
               </transformers>
             </configuration>

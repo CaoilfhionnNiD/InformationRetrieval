@@ -63,9 +63,9 @@ public class WordEmbeddingModel {
             }
 	  }
         }
-	System.out.println(inputTerm);
-	System.out.println(mostSimilarTerm);
-	System.out.println("-------------------------");
+	//System.out.println(inputTerm);
+	//System.out.println(mostSimilarTerm);
+	//System.out.println("-------------------------");
         return mostSimilarTerm;
     }
 

@@ -1,4 +1,4 @@
-package com.example.new_sources;
+package com.example.news_sources;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
