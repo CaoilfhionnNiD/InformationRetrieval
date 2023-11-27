@@ -47,11 +47,11 @@ public class QueryIndex
 	private static String TOPICS_DIRECTORY = "topics";
 	private static WordEmbeddingModel wordEmbeddingModel;	
 
-	private static List<BooleanQuery> queries = new ArrayList<>();
+	private static List<CustomBooleanQuery> queries = new ArrayList<>();
 	private static int MAX_RESULTS = 10;
 	private static Analyzer analyzer;
 
-	public static List<BooleanQuery> loadQueries(Analyzer chosenAnalyzer, WordEmbeddingModel wem) throws IOException, ParseException
+	public static List<CustomBooleanQuery> loadQueries(Analyzer chosenAnalyzer, WordEmbeddingModel wem) throws IOException, ParseException
 	{
 		analyzer = chosenAnalyzer;
 		wordEmbeddingModel = wem;
@@ -88,7 +88,7 @@ public class QueryIndex
         String narrative = extractTagContent(topElement, "narr");
 
     	try {
-        BooleanQuery query = createQuery(title, description, narrative);
+        CustomBooleanQuery query = createQuery(number, title, description, narrative);
 	//System.out.println(query.toString());
 	queries.add(query);
     	} catch (ParseException e) {
@@ -96,7 +96,7 @@ public class QueryIndex
     	}
     }
 
-    private static BooleanQuery createQuery(String title, String description, String narrative) throws ParseException {
+    private static CustomBooleanQuery createQuery(String number, String title, String description, String narrative) throws ParseException {
         
 	String expandedTitle = expandQuery(title);
        // String expandedDescription = expandQuery(description);
@@ -107,10 +107,13 @@ public class QueryIndex
 	Query titleQuery = queryParser.parse(QueryParser.escape(expandedTitle));
 	Query descriptionQuery = queryParser.parse(QueryParser.escape(description));
         
-	BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
-	booleanQuery.add(new BoostQuery(titleQuery, (float) 1), BooleanClause.Occur.SHOULD);
-	booleanQuery.add(new BoostQuery(descriptionQuery, (float) 2), BooleanClause.Occur.SHOULD);
-	return booleanQuery.build();
+	BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
+	booleanQueryBuilder.add(new BoostQuery(titleQuery, (float) 1), BooleanClause.Occur.SHOULD);
+	booleanQueryBuilder.add(new BoostQuery(descriptionQuery, (float) 2), BooleanClause.Occur.SHOULD);
+
+	BooleanQuery booleanQuery = booleanQueryBuilder.build();
+
+    	return new CustomBooleanQuery(booleanQuery, number);
     }
 
 	private static String expandQuery(String input)
@@ -147,4 +150,3 @@ public class QueryIndex
     }
 	
 }
-

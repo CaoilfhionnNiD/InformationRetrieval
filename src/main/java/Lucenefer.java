@@ -60,7 +60,7 @@ public class Lucenefer {
     private static List<Document> laTimesDocs = new ArrayList<>();
     private static List<Document> fbisDocs = new ArrayList<>();
 
-    private static List<BooleanQuery> queries = new ArrayList<>();
+    private static List<CustomBooleanQuery> queries = new ArrayList<>();
     private static WordEmbeddingModel wordEmbeddingModel;
 
     private final static Path currentRelativePath = Paths.get("").toAbsolutePath();
@@ -289,17 +289,18 @@ public class Lucenefer {
             PrintWriter writer = new PrintWriter(absPathToSearchResults, "UTF-8");
 
 	    int queryNum = 0;
-	   for (BooleanQuery query : queries) {
+	   for (CustomBooleanQuery customQuery : queries) {
 		    // Get the set of results
 //		  	System.out.println(query);
-                ScoreDoc[] hits = indexSearcher.search(query, 1000).scoreDocs;
+                BooleanQuery query = customQuery.getBooleanQuery();
+		ScoreDoc[] hits = indexSearcher.search(query, 1000).scoreDocs;
 		String analyzerName = analyzer.getClass().getName();
 
                 // Print the results
                 for (int i = 0; i < hits.length; i++)
                 {
                         Document hitDoc = indexSearcher.doc(hits[i].doc);
-                        String resultLine = queryNum + "\t" + "Q0" + "\t" + hitDoc.get("DocNo") + "\t" + (i + 1) + "\t" + hits[i].score + "\t" + analyzerName;
+                        String resultLine = customQuery.getQueryNumber() + "\t" + "0" + "\t" + hitDoc.get("DocNo") + "\t" + (i + 1) + "\t" + hits[i].score + "\t" + analyzerName;
                         writer.println(resultLine);
 	    	}	    
 		queryNum++;
