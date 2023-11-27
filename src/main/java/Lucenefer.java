@@ -203,7 +203,6 @@ public class Lucenefer {
             directory = FSDirectory.open(Paths.get(absPathToIndex));
         }
         System.out.println("loading and executing queries");
-        System.out.println(directory);
 	//wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
 	executeQueries(directory, wordEmbeddingModel);
         analyzer.close();
@@ -225,23 +224,19 @@ public class Lucenefer {
         loadFilesAndExtractInfoForLosAngelesTimes(absPathToLaTimes);
         System.out.println("1");
         laTimesDocs= getLosAngelesTimesDocs();
-        System.out.println("loaded la times documents");
+        
+	System.out.println("loaded la times documents");
 
         System.out.println("loading financial times documents");
         loadFilesAndExtractInfoForFinancialTimes(absPathToFinTimes);
         finTimesDocs = getFinancialTimesDocs();
-        System.out.println("size of financial times documents: " + finTimesDocs.size());
-	Document doc = finTimesDocs.get(5);
-
-	for (IndexableField field : doc.getFields()) {
-            System.out.println("Field Name: " + field.name() + ", Field Value: " + field.stringValue());
-        }
+        System.out.println("size of LA times documents: " + laTimesDocs.size());
+	Document doc = laTimesDocs.get(545);
 
         System.out.println("loading federal register documents");
         loadFilesAndExtractInfoForFederalRegister(absPathToFedRegister);
         fedRegisterDocs = getFedRegisterDocs();
         System.out.println("loaded federal register documents");
-
 
 	System.out.println("size of financial times documents: " + finTimesDocs.size());
 	System.out.println("size of la times documents: " + laTimesDocs.size());
@@ -263,14 +258,7 @@ public class Lucenefer {
 
             System.out.println("indexing federal register document collection");
             indexWriter.addDocuments(fedRegisterDocs);
-	    Document document = fedRegisterDocs.get(102);
-
-	    for (IndexableField field : document.getFields()) {
-        String fieldName = field.name();
-        String fieldValue = field.stringValue(); // Use appropriate method based on the field type
-
-        System.out.println("Field: " + fieldName + ", Value: " + fieldValue);
-    }
+	    
             System.out.println("indexing la times document collection");
             indexWriter.addDocuments(laTimesDocs);
 
