@@ -42,7 +42,6 @@ public class FederalRegister {
     		if (matcher.find()) {
         		setDocNo(matcher.group(1).trim());
     		} else {
-        		System.out.println("No match found for DOCNO in:\n" + doc);
  			setDocNo("");
 		}
 
@@ -51,7 +50,6 @@ public class FederalRegister {
     		if (matcher.find()) {
         		setText(matcher.group(1).trim());
     		} else {
-        		System.out.println("No match found for TEXT in:\n" + doc);
     			setText("");
     		}
 	}

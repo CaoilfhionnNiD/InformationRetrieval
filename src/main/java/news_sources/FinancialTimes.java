@@ -45,9 +45,7 @@ public class FinancialTimes {
     if (matcher.find()) {
         setDocNo(matcher.group(1).trim());
     } else {
-        System.out.println("No match found for DOCNO in:\n" + doc);
  	setDocNo("");
-	
     }
 
     matcher = HEADLINE_PATTERN.matcher(doc);
@@ -55,7 +53,6 @@ public class FinancialTimes {
     if (matcher.find()) {
         setHeadline(matcher.group(1).trim());
     } else {
-        System.out.println("No match found for HEADLINE in:\n" + doc);
     	setHeadline("");
     }
 
@@ -64,7 +61,6 @@ public class FinancialTimes {
     if (matcher.find()) {
         setText(matcher.group(1).trim());
     } else {
-        System.out.println("No match found for TEXT in:\n" + doc);
     	setText("");
     }
 }

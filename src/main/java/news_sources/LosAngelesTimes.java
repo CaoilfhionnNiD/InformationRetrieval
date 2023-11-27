@@ -47,7 +47,6 @@ public class LosAngelesTimes {
 		if (matcher.find()) {
         	setDocNo(matcher.group(1).trim());
     		} else {
-        		System.out.println("No match found for DOCNO in:\n" + doc);
         		setDocNo("");
     		}
 
@@ -57,7 +56,6 @@ public class LosAngelesTimes {
 			String headline = matcher.group(1).replaceAll("<P>", "").replaceAll("</P>", "").trim();
                         setHeadline(headline);
     		} else {
-        		System.out.println("No match found for HEADLINE in:\n" + doc);
         		setHeadline("");
     		}
 
