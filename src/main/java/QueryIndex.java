@@ -5,16 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.Scanner;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -26,15 +18,11 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.DirectoryReader;
 
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -101,16 +89,20 @@ public class QueryIndex
 	String expandedTitle = expandQuery(title);
        // String expandedDescription = expandQuery(description);
 
-        String query = String.format("Headline:\"%s\"^2.0 OR Text:\"%s\"^1.5 OR narrative:\"%s\"", expandedTitle, description, narrative);
+//        String query = String.format("Headline:\"%s\"^2.0 OR Text:\"%s\"^1.5 OR narrative:\"%s\"", expandedTitle, description, narrative);
        
 	QueryParser queryParser = new MultiFieldQueryParser(new String[]{"Headline", "Text"}, analyzer);
-	Query titleQuery = queryParser.parse(QueryParser.escape(expandedTitle));
+
+	Query originalTitleQuery = queryParser.parse(title);
+
+	Query expandedTitleQuery = queryParser.parse(QueryParser.escape(expandedTitle));
 	Query descriptionQuery = queryParser.parse(QueryParser.escape(description));
         
 	BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
-	booleanQueryBuilder.add(new BoostQuery(titleQuery, (float) 1), BooleanClause.Occur.SHOULD);
-	booleanQueryBuilder.add(new BoostQuery(descriptionQuery, (float) 2), BooleanClause.Occur.SHOULD);
+	booleanQueryBuilder.add(new BoostQuery(originalTitleQuery, (float) 2.0f), BooleanClause.Occur.MUST);
+	booleanQueryBuilder.add(new BoostQuery(descriptionQuery, (float) 1.5f), BooleanClause.Occur.MUST);
 
+	booleanQueryBuilder.add(new BoostQuery(expandedTitleQuery, 1.0f), BooleanClause.Occur.SHOULD);
 	BooleanQuery booleanQuery = booleanQueryBuilder.build();
 
     	return new CustomBooleanQuery(booleanQuery, number);
@@ -124,12 +116,12 @@ public class QueryIndex
 		for(int i = 0; i < terms.length; i++)
 		{
 			String term = terms[i];
-			expandedQuery.append(term).append(" ");
+			expandedQuery.append(term).append("^2.0 ");
 			if (wordEmbeddingModel.hasWord(term)) {
                 		float[] embedding = wordEmbeddingModel.getEmbedding(term);
                		        String similarTerm = wordEmbeddingModel.findSimilarTerm(term, embedding);
                 		if (!similarTerm.equals(term)) {
-             		     		expandedQuery.append(similarTerm).append(" ");
+             		     		expandedQuery.append(similarTerm).append("^1.0 ");
             			}
             		}
 		}
