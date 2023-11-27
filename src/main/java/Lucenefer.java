@@ -293,6 +293,13 @@ public class Lucenefer {
 		    // Get the set of results
 //		  	System.out.println(query);
                 BooleanQuery query = customQuery.getBooleanQuery();
+
+		for (BooleanClause clause : query.clauses()) {
+            Query q = clause.getQuery();
+            BooleanClause.Occur occur = clause.getOccur();
+
+            System.out.println(String.format("(%s) %s", occur, q.toString()));
+        }
 		ScoreDoc[] hits = indexSearcher.search(query, 1000).scoreDocs;
 		String analyzerName = analyzer.getClass().getName();
 

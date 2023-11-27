@@ -18,6 +18,7 @@ import org.apache.lucene.analysis.ngram.NGramTokenFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 //import org.apache.lucene.analysis.standard.StandardFilter;
+import org.apache.lucene.analysis.standard.ClassicFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
@@ -39,16 +40,30 @@ public class CustomAnalyzer extends Analyzer {
 
 	@Override
 	protected TokenStreamComponents createComponents(String s) {
-		final Tokenizer tokenizer = new StandardTokenizer();
-	//	TokenStream stream = new StandardFilter(tokenizer);
-		TokenStream stream = new LowerCaseFilter(tokenizer);
-		stream = new TrimFilter(stream);
+		Tokenizer tokenizer = new StandardTokenizer();
+		TokenStream stream = new ClassicFilter(tokenizer);
 		stream = new NGramTokenFilter(stream, 2, 3, true);
+	//	TokenStream stream = new StandardFilter(tokenizer);
+
+		stream = new WordDelimiterGraphFilter(stream, WordDelimiterGraphFilter.SPLIT_ON_NUMERICS |
+            	WordDelimiterGraphFilter.GENERATE_WORD_PARTS | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS |
+           	WordDelimiterGraphFilter.PRESERVE_ORIGINAL , null);
+
+		stream = new FlattenGraphFilter(stream);
+		stream = new LowerCaseFilter(stream);
+                stream = new TrimFilter(stream);
+    // Experiment with the order of the NGramTokenFilter and SynonymGraphFilter
+    		//stream = new NGramTokenFilter(stream, 2, 3, true);
+
+    // Adjust the order and configuration of the FlattenGraphFilter and SynonymGraphFilter
+    		//stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, wordExpansion(), true));
+		/*		stream = new NGramTokenFilter(stream, 2, 3, true);
 
 		stream = new FlattenGraphFilter(new WordDelimiterGraphFilter(stream, WordDelimiterGraphFilter.SPLIT_ON_NUMERICS |
 				WordDelimiterGraphFilter.GENERATE_WORD_PARTS | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS |
 				WordDelimiterGraphFilter.PRESERVE_ORIGINAL , null));
-      		stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, wordExpansion(), true));
+//      		stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, wordExpansion(), true));
+*/
 		stream = new StopFilter(stream, ENGLISH_STOP_WORDS_SET);
 		stream = new PorterStemFilter(stream);
 
