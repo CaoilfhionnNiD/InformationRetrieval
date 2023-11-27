@@ -11,15 +11,13 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 public class ForeignBroadcast {
     String docNo;
-    String HT;
-    Date date;
     String headline;
     String text;
-    String pub;
-    String page;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
-
+    private static final Pattern DOCNO_PATTERN = Pattern.compile("<DOCNO>([\\s\\S]*?)</DOCNO>");
+    private static final Pattern TEXT_PATTERN = Pattern.compile("<TEXT>([\\s\\S]*?)</TEXT>");
+    private static final Pattern TI_PATTERN = Pattern.compile("<TI>([\\s\\S]*?)</TI>");
+    
     public ForeignBroadcast() {
     }
 
@@ -27,72 +25,47 @@ public class ForeignBroadcast {
         this.docNo = docNo;
     }
 
-    public void setHT(String HT) {
-        this.HT = HT;
+    public void setHeadline(String headline) {
+        this.headline = headline;
     }
 
-    public void setDate(String dateString) {
-        try{
-            if(!dateString.equals("")){ 
-		Date date = dateFormat.parse(dateString);
-            	this.date = date;
-	    }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public void setText(String text) {
+    	this.text = text;
     }
 
-    public void setHeadline(String headline) {this.headline = headline;}
-    public void setText(String text) {this.text = text;}
-    public String getHT() {return this.HT;}
     public String getDocNo() {return this.docNo;}
-    public Date getDate() {return this.date;}
     public String getHeadline() {return this.headline;}
     public String getText() {return this.text;}
 
 
     public void loadForeignBroadcastDoc(String doc) {
 
-        Pattern pattern = Pattern.compile("<DOCNO>([\\s\\S]*?)</DOCNO>");
-        Matcher matcher = pattern.matcher(doc);
+        Matcher matcher = DOCNO_PATTERN.matcher(doc);
 
-        if(matcher.find())
-        {
-            setDocNo(matcher.group(1).trim());
-        }
-        else setDocNo("");
+    if (matcher.find()) {
+        setDocNo(matcher.group(1).trim());
+    } else {
+        System.out.println("No match found for DOCNO in:\n" + doc);
+ 	setDocNo("");
+	
+    }
 
+    matcher = TI_PATTERN.matcher(doc);
 
-        pattern = Pattern.compile("<HT>([\\s\\S]*?)</HT>");
-        matcher = pattern.matcher(doc);
+    if (matcher.find()) {
+        setHeadline(matcher.group(1).trim());
+    } else {
+        System.out.println("No match found for HEADLINE in:\n" + doc);
+    	setHeadline("");
+    }
 
-        if (matcher.find()) {
-            setHT(matcher.group(1).trim());
-        } else setHT("");
+    matcher = TEXT_PATTERN.matcher(doc);
 
-
-        pattern = Pattern.compile("<DATE1>([\\s\\S]*?)</DATE1>");
-        matcher = pattern.matcher(doc);
-
-        if (matcher.find()) {
-            setDate(matcher.group(1).trim());
-        } else setDate("");
-
-
-        pattern = Pattern.compile("<TI>([\\s\\S]*?)</TI>");
-        matcher = pattern.matcher(doc);
-
-        if (matcher.find()) {
-            setHeadline(matcher.group(1).trim());
-        } else setHeadline("");
-
-
-        pattern = Pattern.compile("<TEXT>([\\s\\S]*?)</TEXT>");
-        matcher = pattern.matcher(doc);
-
-        if (matcher.find()) {
-            setText(matcher.group(1).trim());
-        } else setText("");
-
+    if (matcher.find()) {
+        setText(matcher.group(1).trim());
+    } else {
+        System.out.println("No match found for TEXT in:\n" + doc);
+    	setText("");
+    }
     }
 }

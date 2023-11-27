@@ -64,13 +64,8 @@ public class FinancialTimesHandler {
         Document luceneDoc = new Document();
 
         luceneDoc.add(new TextField("DocNo", financialTimes.getDocNo(), Field.Store.YES));
-//        luceneDoc.add(new TextField("Profile", financialTimes.getProfile(), Field.Store.YES));
-  //      luceneDoc.add(new TextField("Date", financialTimes.getDate(), Field.Store.YES));
         luceneDoc.add(new TextField("Headline", financialTimes.getHeadline(), Field.Store.YES));
         luceneDoc.add(new TextField("Text", financialTimes.getText(), Field.Store.YES));
-    //    luceneDoc.add(new TextField("Pub", financialTimes.getPub(), Field.Store.YES));
-      //  luceneDoc.add(new TextField("Page", financialTimes.getPage(), Field.Store.YES));
-
         return luceneDoc;
     }
 

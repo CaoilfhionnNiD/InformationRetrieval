@@ -64,7 +64,6 @@ public class FederalRegisterHandler {
         Document luceneDoc = new Document();
 
         luceneDoc.add(new TextField("DocNo", federalRegister.getDocNo(), Field.Store.YES));
-        luceneDoc.add(new TextField("Parent", federalRegister.getParent(), Field.Store.YES));
         luceneDoc.add(new TextField("Text", federalRegister.getText(), Field.Store.YES));
 
         return luceneDoc;

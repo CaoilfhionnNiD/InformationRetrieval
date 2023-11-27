@@ -66,13 +66,8 @@ public class LosAngelesTimesHandler {
         Document luceneDoc = new Document();
 
         luceneDoc.add(new TextField("DocNo", losAngelesTimes.getDocNo(), Field.Store.YES));
-//        luceneDoc.add(new TextField("ID", losAngelesTimes.getDocID(), Field.Store.YES));
-  //      luceneDoc.add(new TextField("Date", losAngelesTimes.getDate(), Field.Store.YES));
         luceneDoc.add(new TextField("Headline", losAngelesTimes.getHeadline(), Field.Store.YES));
         luceneDoc.add(new TextField("Text", losAngelesTimes.getText(), Field.Store.YES));
-//        luceneDoc.add(new TextField("Section", losAngelesTimes.getSection(), Field.Store.YES));
-//        luceneDoc.add(new TextField("Length", losAngelesTimes.getLength(), Field.Store.YES));
-//        luceneDoc.add(new TextField("Byline", losAngelesTimes.getByline(), Field.Store.YES));
         return luceneDoc;
     }
 }

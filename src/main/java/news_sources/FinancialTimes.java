@@ -19,11 +19,6 @@ public class FinancialTimes {
 	private static final Pattern DOCNO_PATTERN = Pattern.compile("<DOCNO>([\\s\\S]*?)</DOCNO>");
         private static final Pattern HEADLINE_PATTERN = Pattern.compile("<HEADLINE>([\\s\\S]*?)</HEADLINE>");
         private static final Pattern TEXT_PATTERN = Pattern.compile("<TEXT>([\\s\\S]*?)</TEXT>");
-	private String match(Pattern pattern, String input) {
-		Matcher matcher = pattern.matcher(input);
-		return matcher.find() && matcher.groupCount() > 0 ? matcher.group(1).trim() : "";
-}
-
 
 	public FinancialTimes() {
 	}

@@ -13,8 +13,11 @@ import java.text.ParseException;
 public class FederalRegister {
 	
 	String docNo;
-	String parent;
 	String text;
+
+	private static final Pattern DOCNO_PATTERN = Pattern.compile("<DOCNO>([\\s\\S]*?)</DOCNO>");
+//        private static final Pattern HEADLINE_PATTERN = Pattern.compile("<HEADLINE>([\\s\\S]*?)</HEADLINE>");
+        private static final Pattern TEXT_PATTERN = Pattern.compile("<TEXT>([\\s\\S]*?)</TEXT>");
 
 	public FederalRegister() {
 	}
@@ -23,47 +26,34 @@ public class FederalRegister {
 	    this.docNo = docNo;
 	}
 
-	public void setParent(String parent) {
-    	    this.parent = parent;
-	}
-
 	public void setText(String text) {
     	    this.text = text;
 	}
 
 	public String getDocNo() {return this.docNo;}
-	public String getParent() {return this.parent;}
 	public String getText() {return this.text;}
 
 	public void loadFederalRegisterDoc(String doc) {
 
         	doc = removeComments(doc);
 	
-		Pattern pattern = Pattern.compile("<DOCNO>([\\s\\S]*?)</DOCNO>");
-        	Matcher matcher = pattern.matcher(doc);
+		Matcher matcher = DOCNO_PATTERN.matcher(doc);
 
-        	if(matcher.find())
-        	{
-                	setDocNo(matcher.group(1).trim());
-        	}
-        	else setDocNo("");
-        	
-		pattern = Pattern.compile("<PARENT>([\\s\\S]*?)</PARENT>");
-                matcher = pattern.matcher(doc);
+    		if (matcher.find()) {
+        		setDocNo(matcher.group(1).trim());
+    		} else {
+        		System.out.println("No match found for DOCNO in:\n" + doc);
+ 			setDocNo("");
+		}
 
-                if(matcher.find())
-                {
-                        setParent(matcher.group(1).trim());
-                }
-                else setParent("");
-
-    		pattern = Pattern.compile("<TEXT>([\\s\\S]*?)</TEXT>");
-    		matcher = pattern.matcher(doc);
+		matcher = TEXT_PATTERN.matcher(doc);
 
     		if (matcher.find()) {
         		setText(matcher.group(1).trim());
-    		} else setText("");
-	
+    		} else {
+        		System.out.println("No match found for TEXT in:\n" + doc);
+    			setText("");
+    		}
 	}
 
     private static String removeComments(String inputString) {

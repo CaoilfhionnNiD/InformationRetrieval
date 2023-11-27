@@ -61,10 +61,7 @@ public class ForeignBroadcastHandler {
 
     private static org.apache.lucene.document.Document createLuceneDocument(ForeignBroadcast foreignBroadcast) {
         Document luceneDoc = new Document();
-        luceneDoc.add(new TextField("HT", foreignBroadcast.getHT(), Field.Store.YES));
         luceneDoc.add(new TextField("DocNo", foreignBroadcast.getDocNo(), Field.Store.YES));
-
-        //luceneDoc.add(new TextField("Date", foreignBroadcast.getDate(), Field.Store.YES));
         luceneDoc.add(new TextField("Headline", foreignBroadcast.getHeadline(), Field.Store.YES));
         luceneDoc.add(new TextField("Text", foreignBroadcast.getText(), Field.Store.YES));
 
