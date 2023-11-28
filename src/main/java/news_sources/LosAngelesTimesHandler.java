@@ -62,7 +62,7 @@ public class LosAngelesTimesHandler {
         return content.toString();
     }
 
-    private static org.apache.lucene.document.Document createLuceneDocument(LosAngelesTimes losAngelesTimes) {
+    private static Document createLuceneDocument(LosAngelesTimes losAngelesTimes) {
         Document luceneDoc = new Document();
 
         luceneDoc.add(new TextField("DocNo", losAngelesTimes.getDocNo(), Field.Store.YES));
