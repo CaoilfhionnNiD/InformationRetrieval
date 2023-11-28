@@ -1,19 +1,22 @@
-package com.example.news_sources; 
+package com.example.news_sources;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import org.apache.lucene.document.Document;
-import com.example.news_sources.FinancialTimes;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
+
 public class FinancialTimesHandler {
     private static List<Document> finTimesDocs = new ArrayList<>();
+
+    private static final Pattern DOC_PATTERN = Pattern.compile("<DOC>([\\s\\S]*?)</DOC>");
 
     public static List<Document> getFinancialTimesDocs() {
         return finTimesDocs;
@@ -29,15 +32,20 @@ public class FinancialTimesHandler {
                     if (file.isDirectory()) {
                         loadFilesAndExtractInfoForFinancialTimes(file.getAbsolutePath());
                     } else {
-                        // Process file
-                        FinancialTimes financialTimes = new FinancialTimes();
                         String fileContent = readFileContent(file.getAbsolutePath());
 
                         if (fileContent != null && !fileContent.isEmpty()) {
-                            financialTimes.loadFinancialTimesDoc(fileContent);
-                            // Extract information and create Lucene Document object
-                            org.apache.lucene.document.Document luceneDoc = createLuceneDocument(financialTimes);
-                            finTimesDocs.add(luceneDoc);
+
+                            Matcher matcher = DOC_PATTERN.matcher(fileContent);
+
+                            while (matcher.find()) {
+                                String match = matcher.group();
+                                FinancialTimes financialTimes = new FinancialTimes();
+                                financialTimes.loadFinancialTimesDoc(match);
+
+                                Document luceneDoc = createLuceneDocument(financialTimes);
+                                finTimesDocs.add(luceneDoc);
+                            }
                         }
                     }
                 }

@@ -5,14 +5,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.lucene.document.Document;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
+
 public class ForeignBroadcastHandler {
     private static List<Document> fbisDocs = new ArrayList<>();
+
+    private static final Pattern DOC_PATTERN = Pattern.compile("<DOC>([\\s\\S]*?)</DOC>");
 
     public static List<Document> getForeignBroadcastDocs() {
         return fbisDocs;
@@ -28,15 +33,20 @@ public class ForeignBroadcastHandler {
                     if (file.isDirectory()) {
                         loadFilesAndExtractInfoForForeignBroadcast(file.getAbsolutePath());
                     } else {
-                        // Process file
-                        ForeignBroadcast foreignBroadcast = new ForeignBroadcast();
                         String fileContent = readFileContent(file.getAbsolutePath());
 
                         if (fileContent != null && !fileContent.isEmpty()) {
-                            foreignBroadcast.loadForeignBroadcastDoc(fileContent);
-                            // Extract information and create Lucene Document object
-                            org.apache.lucene.document.Document luceneDoc = createLuceneDocument(foreignBroadcast);
-                            fbisDocs.add(luceneDoc);
+
+                            Matcher matcher = DOC_PATTERN.matcher(fileContent);
+
+                            while (matcher.find()) {
+                                String match = matcher.group();
+                                ForeignBroadcast foreignBroadcast = new ForeignBroadcast();
+                                foreignBroadcast.loadForeignBroadcastDoc(match);
+
+                                Document luceneDoc = createLuceneDocument(foreignBroadcast);
+                                fbisDocs.add(luceneDoc);
+                            }
                         }
                     }
                 }
