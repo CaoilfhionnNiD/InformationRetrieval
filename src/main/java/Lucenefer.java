@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.morfologik.MorfologikAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -93,7 +94,7 @@ public class Lucenefer {
         Scanner myObj = new Scanner(System.in);
         String similarityChosen = myObj.nextLine();
 
-	wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
+	//wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
         String similarity = null;
         //Retrieval model choose
         switch (similarityChosen) {
@@ -137,7 +138,7 @@ public class Lucenefer {
         //Analyzer choose
         System.out.println("Please select the type of Analyzer for Index Writer:\n 1 for MORFOLOGICAnalyzer()\n " +
                 "2 for STOPAnalyzer()\n 3 for SIMPLEAnalyzer()\n 4 for STANDARDAnalyzer()\n " +
-                "5 for WHITESPACEAnalyzer()\n 6 for CUSTOMAnalyzer()\n"
+                "5 for WHITESPACEAnalyzer()\n 6 for CUSTOMAnalyzer()\n 7 for EnglishAnalyzer\n"
         );
         Scanner myObjIndex = new Scanner(System.in);
         String analyzerChosen = myObjIndex.nextLine();
@@ -177,8 +178,13 @@ public class Lucenefer {
                 analyzer = new CustomAnalyzer();
                 System.out.println("Selected Analyzer for Index Writer is: CUSTOMAnalyzer()");
                 break;
+	    case "7":
+                indexWriter = "English";
+                this.analyzer = new EnglishAnalyzer(ENGLISH_STOP_WORDS_SET);
+                System.out.println("Selected Analyzer for Index Writer is: EnglishAnalyzer()");
 
-            default:
+            	break;
+	    default:
                 indexWriter = "CUSTOM";
                 analyzer = new CustomAnalyzer();
                 System.out.println("Selected Default Analyzer for Index Writer is: CUSTOMAnalyzer()");
@@ -203,7 +209,7 @@ public class Lucenefer {
             directory = FSDirectory.open(Paths.get(absPathToIndex));
         }
         System.out.println("loading and executing queries");
-	//wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
+	wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
 	executeQueries(directory, wordEmbeddingModel);
         analyzer.close();
         try {
@@ -220,7 +226,7 @@ public class Lucenefer {
         fbisDocs = getForeignBroadcastDocs();
         System.out.println("loaded foreign broadcast information service documents");
 
-        System.out.println("loading la times documents");
+	System.out.println("loading la times documents");
         loadFilesAndExtractInfoForLosAngelesTimes(absPathToLaTimes);
         System.out.println("1");
         laTimesDocs= getLosAngelesTimesDocs();
@@ -232,7 +238,10 @@ public class Lucenefer {
         finTimesDocs = getFinancialTimesDocs();
         System.out.println("size of LA times documents: " + laTimesDocs.size());
 	Document doc = laTimesDocs.get(545);
+	System.out.print(doc.get("DocNo"));
 
+	doc = laTimesDocs.get(546);
+        System.out.print(doc.get("DocNo"));
         System.out.println("loading federal register documents");
         loadFilesAndExtractInfoForFederalRegister(absPathToFedRegister);
         fedRegisterDocs = getFedRegisterDocs();
@@ -246,24 +255,38 @@ public class Lucenefer {
 
     private static void indexDocuments(Similarity similarity, Analyzer analyzer, Directory directory) {
         IndexWriter indexWriter;
-        IndexWriterConfig indexWriterConfig = new IndexWriterConfig();
-        indexWriterConfig.setSimilarity(similarity).setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+        indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 
         try {
             indexWriter = new IndexWriter(directory, indexWriterConfig);
-            indexWriter.deleteAll();
+            //indexWriter.deleteAll();
 
             System.out.println("indexing financial times document collection");
-            indexWriter.addDocuments(finTimesDocs);
+            for (Document doc: finTimesDocs) {
+	    	indexWriter.addDocument(doc);
+	    }
+	    //indexWriter.addDocuments(finTimesDocs);
 
-            System.out.println("indexing federal register document collection");
-            indexWriter.addDocuments(fedRegisterDocs);
-	    
+            //System.out.println("indexing federal register document collection");
+            //indexWriter.addDocuments(fedRegisterDocs);
+	    for (Document doc: fedRegisterDocs) {
+                indexWriter.addDocument(doc);
+            }
+
             System.out.println("indexing la times document collection");
-            indexWriter.addDocuments(laTimesDocs);
+            //indexWriter.addDocuments(laTimesDocs);
+
+	    for (Document doc: laTimesDocs) {
+                indexWriter.addDocument(doc);
+            }
 
             System.out.println("indexing foreign broadcast information service document collection");
-            indexWriter.addDocuments(fbisDocs);
+            //indexWriter.addDocuments(fbisDocs);
+
+	    for (Document doc: fbisDocs) {
+                indexWriter.addDocument(doc);
+            }
 
             try {
                 indexWriter.close();
@@ -277,6 +300,7 @@ public class Lucenefer {
             System.out.println(String.format("ERROR MESSAGE: %s", e.getMessage()));
         }
     }
+
     private static void executeQueries(Directory directory, WordEmbeddingModel wordEmbeddingModel) throws ParseException {
         try {
             IndexReader indexReader = DirectoryReader.open(directory);
