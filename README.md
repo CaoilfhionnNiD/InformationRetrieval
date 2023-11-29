@@ -2,6 +2,12 @@ To build the project: mvn package
 
 To run the code: java -jar target/InformationRetrieval-1.0-SNAPSHOT.jar
 
+To get trec_eval results: 
+- Foremost, ensure that the trec_eval tool executable is ready for scoring by running the trec_eval command in the trec_eval-9.0.7 folder. If it is, skip to the third step
+- If the trec_eval executable throws an error, make sure to run the "make" command in the trec_eval-9.0.7 folder.
+- Run the following code in the trec_eval-9.0.7 folder terminal: trec_eval ../qrels.assignment2.part1 ../queryResults
+- This will give the scoring of the current choice of the analyzer and similarity type.
+
 Download GloVe word embedding vectors from here: https://nlp.stanford.edu/projects/glove/
 
 BM25Similarity and EnglishAnalyzer
