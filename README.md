@@ -78,3 +78,37 @@ P_200                   all     0.1404
 P_500                   all     0.0793
 P_1000                  all     0.0484
 
+
+
+BM25Similarity and CustomAnalyzer
+Trec eval results(with query expansion):
+runid                   all     com.example.CustomAnalyzer
+num_q                   all     25
+num_ret                 all     24085
+num_rel                 all     2132
+num_rel_ret             all     1201
+map                     all     0.2166
+gm_map                  all     0.1526
+Rprec                   all     0.2817
+bpref                   all     0.2543
+recip_rank              all     0.7148
+iprec_at_recall_0.00    all     0.7558
+iprec_at_recall_0.10    all     0.5304
+iprec_at_recall_0.20    all     0.3723
+iprec_at_recall_0.30    all     0.3071
+iprec_at_recall_0.40    all     0.2359
+iprec_at_recall_0.50    all     0.1824
+iprec_at_recall_0.60    all     0.1173
+iprec_at_recall_0.70    all     0.0746
+iprec_at_recall_0.80    all     0.0572
+iprec_at_recall_0.90    all     0.0377
+iprec_at_recall_1.00    all     0.0130
+P_5                     all     0.4960
+P_10                    all     0.4720
+P_15                    all     0.4400
+P_20                    all     0.4100
+P_30                    all     0.3440
+P_100                   all     0.2004
+P_200                   all     0.1386
+P_500                   all     0.0775
+P_1000                  all     0.0480
