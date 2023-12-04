@@ -45,7 +45,7 @@ P_500                   all     0.0763
 P_1000                  all     0.0470
 
 BM25Similarity and EnglishAnalyzer
-Trec eval results(thout query expansion):
+Trec eval results(without query expansion):
 
 runid                   all     org.apache.lucene.analysis.en.EnglishAnalyzer
 num_q                   all     25
@@ -112,3 +112,70 @@ P_100                   all     0.2004
 P_200                   all     0.1386
 P_500                   all     0.0775
 P_1000                  all     0.0480
+
+BM25Similarity and CustomAnalyzer
+Trec eval results(without query expansion):
+runid                   all     com.example.CustomAnalyzer
+num_q                   all     25
+num_ret                 all     24085
+num_rel                 all     2132
+num_rel_ret             all     1203
+map                     all     0.2165
+gm_map                  all     0.1527
+Rprec                   all     0.2823
+bpref                   all     0.2548
+recip_rank              all     0.7148
+iprec_at_recall_0.00    all     0.7558
+iprec_at_recall_0.10    all     0.5304
+iprec_at_recall_0.20    all     0.3724
+iprec_at_recall_0.30    all     0.3072
+iprec_at_recall_0.40    all     0.2380
+iprec_at_recall_0.50    all     0.1831
+iprec_at_recall_0.60    all     0.1177
+iprec_at_recall_0.70    all     0.0747
+iprec_at_recall_0.80    all     0.0573
+iprec_at_recall_0.90    all     0.0377
+iprec_at_recall_1.00    all     0.0130
+P_5                     all     0.4960
+P_10                    all     0.4720
+P_15                    all     0.4400
+P_20                    all     0.4100
+P_30                    all     0.3440
+P_100                   all     0.2004
+P_200                   all     0.1394
+P_500                   all     0.0775
+P_1000                  all     0.0481
+
+
+BM25Similarity and CustomAnalyzer
+Trec eval results(with query title and description expansion):
+runid                   all     com.example.CustomAnalyzer
+num_q                   all     25
+num_ret                 all     24085
+num_rel                 all     2132
+num_rel_ret             all     1106
+map                     all     0.1458
+gm_map                  all     0.0749
+Rprec                   all     0.2088
+bpref                   all     0.2384
+recip_rank              all     0.4665
+iprec_at_recall_0.00    all     0.5169
+iprec_at_recall_0.10    all     0.3432
+iprec_at_recall_0.20    all     0.2496
+iprec_at_recall_0.30    all     0.1988
+iprec_at_recall_0.40    all     0.1642
+iprec_at_recall_0.50    all     0.1319
+iprec_at_recall_0.60    all     0.0816
+iprec_at_recall_0.70    all     0.0646
+iprec_at_recall_0.80    all     0.0560
+iprec_at_recall_0.90    all     0.0358
+iprec_at_recall_1.00    all     0.0140
+P_5                     all     0.2480
+P_10                    all     0.2440
+P_15                    all     0.2400
+P_20                    all     0.2340
+P_30                    all     0.2147
+P_100                   all     0.1392
+P_200                   all     0.1076
+P_500                   all     0.0705
+P_1000                  all     0.0442
