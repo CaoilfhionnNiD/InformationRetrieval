@@ -1,0 +1,8 @@
+com/example/App.class
+com/example/ReadDocuments.class
+com/example/WordEmbeddingModel.class
+com/example/new_sources/LosAngelesTimes.class
+com/example/new_sources/ForeignBroadcast.class
+com/example/QueryIndex.class
+com/example/new_sources/FederalRegister.class
+com/example/new_sources/FinancialTimes.class
