@@ -26,15 +26,12 @@ public class QueryIndex {
 	private static WordEmbeddingModel wordEmbeddingModel;
 
 	private static List<CustomBooleanQuery> queries = new ArrayList<>();
-	// private static int MAX_RESULTS = 10;
 	private static Analyzer analyzer;
 
 	public static List<CustomBooleanQuery> loadQueries(Analyzer chosenAnalyzer, WordEmbeddingModel wem)
 			throws IOException, ParseException {
 		analyzer = chosenAnalyzer;
 		wordEmbeddingModel = wem;
-		System.out.println("QUERIES");
-		// wordEmbeddingModel = new WordEmbeddingModel("glove.6B.50d.txt");
 		parseNonStandardXml(TOPICS_DIRECTORY);
 		return queries;
 	}
@@ -67,7 +64,6 @@ public class QueryIndex {
 
 		try {
 			CustomBooleanQuery query = createQuery(number, title, description, narrative);
-			// System.out.println(query.toString());
 			queries.add(query);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -79,9 +75,6 @@ public class QueryIndex {
 
 		String expandedTitle = expandQuery(title);
 		// String expandedDescription = expandQuery(description);
-
-		// String query = String.format("Headline:\"%s\"^2.0 OR Text:\"%s\"^1.5 OR
-		// narrative:\"%s\"", expandedTitle, description, narrative);
 
 		QueryParser queryParser = new MultiFieldQueryParser(new String[] { "Headline", "Text" }, analyzer);
 

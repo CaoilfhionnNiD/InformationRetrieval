@@ -9,8 +9,6 @@ public class FederalRegister {
 	String text;
 
 	private static final Pattern DOCNO_PATTERN = Pattern.compile("<DOCNO>([\\s\\S]*?)</DOCNO>");
-	// private static final Pattern HEADLINE_PATTERN =
-	// Pattern.compile("<HEADLINE>([\\s\\S]*?)</HEADLINE>");
 	private static final Pattern TEXT_PATTERN = Pattern.compile("<TEXT>([\\s\\S]*?)</TEXT>");
 
 	public FederalRegister() {

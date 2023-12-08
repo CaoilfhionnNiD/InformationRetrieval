@@ -67,9 +67,6 @@ public class WordEmbeddingModel {
                 }
             }
         }
-        // System.out.println(inputTerm);
-        // System.out.println(mostSimilarTerm);
-        // System.out.println("-------------------------");
         return mostSimilarTerm;
     }
 
@@ -99,21 +96,4 @@ public class WordEmbeddingModel {
             return dotProduct / (magnitude1 * magnitude2);
         }
     }
-
-    // public static void main(String[] args) {
-    // Example usage
-    // String modelPath = "cc.en.300.vec";
-    // FastTextModel fastTextModel = new FastTextModel(modelPath);
-
-    // String wordToCheck = "information";
-    // if (fastTextModel.hasWord(wordToCheck)) {
-    // float[] embedding = fastTextModel.getEmbedding(wordToCheck);
-    // Use the embedding as needed
-    // System.out.println("Embedding for " + wordToCheck + ": " +
-    // java.util.Arrays.toString(embedding));
-    // } else {
-    // System.out.println(wordToCheck + " is not in the fastText model's
-    // vocabulary.");
-    // }
-    // }
 }
